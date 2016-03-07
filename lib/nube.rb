@@ -4,7 +4,7 @@ require 'active_support'
 require 'action_pack'
 require 'active_model'
 require 'nube/version'
-#require 'nube/controllers/base_api_controller.rb'
+require 'nube/controllers/nube_controller'
 
 module Nube
   extend ActiveSupport::Autoload
@@ -15,5 +15,5 @@ module Nube
   autoload :RemoteScope
   autoload :LocalAssociation
   autoload :RemoteAssociation
-  autoload :BaseApiController, 'nube/controllers/base_api_controller'
+  autoload :NubeController
 end

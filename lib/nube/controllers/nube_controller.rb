@@ -1,6 +1,4 @@
-# module Nube
-module BaseApiController
-  # class BaseApiController < ::ApplicationController
+module NubeController
   extend ActiveSupport::Concern
 
   def resource
