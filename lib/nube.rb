@@ -1,9 +1,10 @@
-require 'rails'
-require 'action_controller'
-require 'active_support'
-require 'action_pack'
-require 'active_model'
 require 'nube/version'
+require 'nube/site'
+require 'nube/remote_relation'
+require 'nube/remote_scope'
+require 'nube/local_association'
+require 'nube/remote_association'
+require 'nube/remote_resource'
 require 'nube/controllers/nube_controller'
 
 module Nube
@@ -15,5 +16,6 @@ module Nube
   autoload :RemoteScope
   autoload :LocalAssociation
   autoload :RemoteAssociation
+  autoload :RemoteResource
   autoload :NubeController
 end
