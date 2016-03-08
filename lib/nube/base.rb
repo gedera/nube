@@ -1,14 +1,8 @@
 require 'uri'
 require 'net/http'
-require 'active_support'
+# require 'active_support'
 require 'active_support/core_ext/string'
-require 'active_model'
-require "nube/version"
-require "nube/remote_relation"
-require "nube/remote_association"
-require "nube/remote_scope"
-require "nube/local_association"
-require "nube/site"
+# require 'active_model'
 
 module Nube
 
