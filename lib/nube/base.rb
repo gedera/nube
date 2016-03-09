@@ -5,7 +5,6 @@ require 'active_support/core_ext/string'
 # require 'active_model'
 
 module Nube
-
   class Base
     attr_reader :new_record
     attr_accessor :attributes, :attrs_changed, :errors
@@ -27,7 +26,7 @@ module Nube
 
     def save(params={})
       if new_record?
-        remote_obj = self.class.post(self.class.site({ controller: self.class.name.pluralize.underscore }, params.merge(identity)), { attributes: @attributes } ).first
+        remote_obj  = self.class.post(self.class.site({ controller: self.class.name.pluralize.underscore }, params.merge(identity)), { attributes: @attributes } ).first
         @attributes = remote_obj["object"]
         @errors     = remote_obj["errors"]
         @new_record = false if @errors.empty?
@@ -67,8 +66,26 @@ module Nube
     end
 
     def inspect
-      "#<#{self.class.name}" + attributes.keys.map{|attr| "#{attr}: #{attributes[attr].inspect}" }.join(', ') + '>'
+      "#<#{self.class.name} " + attributes.keys.map{|attr| "#{attr}: #{attributes[attr].inspect}" }.join(', ') + '>'
     end
+
+    # def model_name
+    #   ActiveModel::Name.new self.class
+    # end
+
+    # def to_key
+    #   [id] if id
+    # end
+
+    # def to_model
+    #   self
+    # end
+
+    # def self.column_names
+    #   new.attributes.keys
+    # end
+
+    # alias_method :persisted?, :new_record?
 
     def self.enum(options)
       options.each do |attr, values|
@@ -82,8 +99,6 @@ module Nube
 
     def self.do_request(method, site, params={})
       url = URI.parse(site)
-      #constant = ActiveSupport::Inflector.constantize("Net::HTTP::#{method.to_s.camelize}")
-      #req = constant.new(url.to_s)
       req = "Net::HTTP::#{method.to_s.camelize}".constantize.new(url.to_s)
       req.body = params.to_param
       res = Net::HTTP.start(url.host, url.port) {|http| http.request(req) }
@@ -111,7 +126,6 @@ module Nube
     end
 
     def self.method_missing(name, *args, &block)
-#      super(name, *args) unless (ActiveSupport::Inflector.constantize("#{self.name}Relation").instance_methods - self.instance_methods).include?(name)
       super(name, *args) unless ("#{self.name}Relation".constantize.instance_methods - self.instance_methods).include?(name)
       args.empty? ? self.node.send(name) : self.node.send(name, args.first)
     end
