@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["g.edera", "eserdio"]
   spec.email         = ["gab.edera@gmail.com"]
 
-  spec.summary       = %q{Working with remote objects as activerecord}
+  spec.summary       = %q{It's possible work with object in differents rails aplicacion as activerecord. All relation, scopes, validations for activerecord works with remote objects}
   spec.description   = %q{Working with remote objects as activerecord}
   spec.homepage      = "https://github.com/gedera/nube.git"
   spec.license       = "MIT"
