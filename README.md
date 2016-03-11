@@ -1,9 +1,5 @@
 # Nube
-Working with remote objects as activerecord
-
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/nube`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+**Nube** aims to be as flexible and abstract as possible while helping you work with remote object in different Rails applicaction as activerecord objects. It's 100% compatible with **Associations** (Locals-Remotes, Remote-Remote, Remote-local), **Scopes**, **Validations**. Besides is posible work with object from different Rails applications.
 
 ## Installation
 
@@ -22,8 +18,63 @@ Or install it yourself as:
     $ gem install nube
 
 ## Usage
+### Associations
+Its possible define relations between differents class, locals with remotes. It's possible use any options, ***as***, ***dependent***, ***foreing_key***, , ***class_name***, etc.
+For local class is only necessary:
+1. Add ***include LocalAssociation***.
+2. Define associations as activerecord but use ***remote_*** when you like define one relation with a remote class, for example: remote_belongs_to, remote_has_one, remote_has_many.
 
-TODO: Write usage instructions here
+For Remote class is only necessary:
+1. All remote class inherits from **Nube::Base**.
+2. All relation definition is with ***remote_***
+
+Examples:
+
+#### Local class with Remote class or Remote class with Local class
+
+```ruby
+    Class Client < < ActiveRecord::Base
+      include LocalAssociation
+      remote_has_one :remote_class, dependent: :nullify, foreign_key: "remote_class_foreign_key_id"
+      remote_has_one :other_remote_class, through: :foo
+      remote_has_many :foo_bar_remote_class, class_name: "RemoteClass", foreign_key: 'foo_bar_remote_class_id'
+      belongs_to :remoteable, polymorphic: true
+      belong_to :bar
+    end
+
+    class Bar < ActiveRecord::Base
+      has_one :client
+    end
+
+    class Remote_class << Nube::Base
+      remote_belongs_to :client
+      remote_has_many :clients
+      has_many :clients, as: :remoteable, class_name: "Client", dependent: :destroy
+    end
+```
+
+#### Remote class with Remote class
+
+```ruby
+    Class Client < < Nube::Base
+      include LocalAssociation
+      remote_has_one :remote_class, dependent: :nullify, foreign_key: "remote_class_foreign_key_id"
+      remote_has_one :other_remote_class, through: :foo
+      remote_has_many :foo_bar_remote_class, class_name: "RemoteClass", foreign_key: 'foo_bar_remote_class_id'
+      remote_belongs_to :remoteable, polymorphic: true
+    end
+
+    class Remote_class << Nube::Base
+      remote_remote_belongs_to :client
+      remote_has_many :clients
+      remote_has_many :clients, as: :remoteable, class_name: "Client", dependent: :destroy
+    end
+```
+### Scopes
+
+
+### Validations
+### API Controller
 
 ## Development
 
