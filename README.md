@@ -72,9 +72,15 @@ Examples:
 ```
 ### Scopes
 
+#### coming soon
 
 ### Validations
+
+The validations must be defined where activerecord models exist. So when a class it's defined as Nube::Base, it's not necessary define any validations.
+
 ### API Controller
+
+##### coming soon
 
 ## Development
 
