@@ -33,7 +33,8 @@ Examples:
 #### Local class with Remote class or Remote class with Local class
 
 ```ruby
-    Class Client < < ActiveRecord::Base
+    # Rails app A with the persisting object
+	Class Client < ActiveRecord::Base
       include LocalAssociation
       remote_has_one :remote_class, dependent: :nullify, foreign_key: "remote_class_foreign_key_id"
       remote_has_one :other_remote_class, through: :foo
@@ -42,10 +43,12 @@ Examples:
       belong_to :bar
     end
 
+    # Rails app A with the persisting object
     class Bar < ActiveRecord::Base
       has_one :client
     end
 
+    # Rails app B without the persisting object
     class Remote_class << Nube::Base
       remote_belongs_to :client
       remote_has_many :clients
@@ -56,7 +59,8 @@ Examples:
 #### Remote class with Remote class
 
 ```ruby
-    Class Client < < Nube::Base
+    # Rails app B without the persisting object
+	Class Client < Nube::Base
       include LocalAssociation
       remote_has_one :remote_class, dependent: :nullify, foreign_key: "remote_class_foreign_key_id"
       remote_has_one :other_remote_class, through: :foo
@@ -64,7 +68,8 @@ Examples:
       remote_belongs_to :remoteable, polymorphic: true
     end
 
-    class Remote_class << Nube::Base
+    # Rails app B without the persisting object
+    class Remote_class < Nube::Base
       remote_remote_belongs_to :client
       remote_has_many :clients
       remote_has_many :clients, as: :remoteable, class_name: "Client", dependent: :destroy
@@ -72,7 +77,21 @@ Examples:
 ```
 ### Scopes
 
-#### coming soon
+```ruby
+    # Rails app A with the persisting object
+    Class Client < ActiveRecord::Base # Rails app A
+	  scope :submitted, -> { where(submitted: true) }
+      scope :newer_than, -> (date1, date2) { where('start_date > ? and start_date < ?', date1, date2) }
+      scope :late, -> { where("timesheet.submitted_at <= ?", 7.days.ago) }
+    end
+
+    # Rails app B without the persisting object
+    class Client < Nube::Base
+      scope :submitted # Only define the name
+	  scope :newer_than, using: [:date1, :date2] # Onlye define scope name, and options.
+	  scope :foo, remote_scope: :late  #Online define name. In this case the scope it's renamed
+    end
+```
 
 ### Validations
 
@@ -80,7 +99,23 @@ The validations must be defined where activerecord models exist. So when a class
 
 ### API Controller
 
-##### coming soon
+It's only necessary define:
+
+```ruby
+	class AnyController < ApplicationController
+	  include NubeController
+	  RESOURCE = ModelName
+	end
+```
+
+The public action are:
+
+1. index
+2. count
+3. create
+4. update
+5. update_all
+6. destroy_all
 
 ## Development
 
