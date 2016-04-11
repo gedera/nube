@@ -23,7 +23,7 @@ module RemoteRelation
         end
 
         def destroy_all(where={}, relations={})
-          @xmodel.delete(@xmodel.site({ controller: controller_name, action: 'destroy_all' }, @params.delete(:site_options)), { where: [where].flatten }).map{|attrs| @xmodel.new(attrs, false) }
+          @xmodel.delete(@params.delete(:site_options).merge({ action: 'destroy_all' }), { where: [where].flatten }).map{|attrs| @xmodel.new(attrs, false) }
         end
 
         def update_all(changes={}, where={}, relations={})
@@ -31,19 +31,19 @@ module RemoteRelation
             # change true and false by 1 or 0 becouse params are sent as string
             changes[attrib] = (value ? 1 : 0) if !!value == value
           end
-          @xmodel.put(@xmodel.site({ controller: controller_name, action: 'update_all' }, @params.delete(:site_options)), { changes: changes, where: [where].flatten }).first
+          @xmodel.put(@params.delete(:site_options).merge({ action: 'update_all' }), { changes: changes, where: [where].flatten }).first
         end
 
         def empty_attributes
-          @xmodel.get(@xmodel.site({ controller: controller_name, action: 'empty_attributes'}, @params.delete(:site_options))).first
+          @xmodel.get(@params.delete(:site_options).merge({ action: 'empty_attributes' })).first
         end
 
         def count
-          @xmodel.get(@xmodel.site({ controller: controller_name, action: 'count' }, @params.delete(:site_options)), @params).first.to_i
+          @xmodel.get(@params.delete(:site_options).merge({ action: 'count' }), @params).first.to_i
         end
 
         def all
-          @xmodel.get(@xmodel.site({ controller: controller_name }, @params.delete(:site_options)), @params).map{|attributes| @xmodel.new(attributes, false) }
+          @xmodel.get(@params.delete(:site_options), @params).map{|attributes| @xmodel.new(attributes, false) }
         end
 
         def first
@@ -69,7 +69,8 @@ module RemoteRelation
 
         def create(attrs={})
           obj = @xmodel.new(attrs)
-          obj.save(@params.delete(:site_options))
+          obj.save
+          obj
         end
 
         def where(conditions); tap{|s| (s.params[:where] || s.params[:where] = []) << conditions}; end
@@ -104,14 +105,14 @@ module RemoteRelation
         alias_method :ransack, :search
 
         def massive_transactions(transaction, method, action)
-          @xmodel.send(method, @xmodel.site({ controller: controller_name, action: action }, @params.delete(:site_options)), @params.merge(transaction: transaction))
+          @xmodel.send(method, @params.delete(:site_options).merge({ action: action }), @params.merge(transaction: transaction))
         end
 
-        def massive_creation(transaction); massive_transactions(transaction, 'post', 'massive_creation'); end
+        def massive_creation(transaction); massive_transactions(transaction, 'post', 'massive_creation', site_options); end
 
-        def massive_sum(transaction); massive_transactions(transaction, 'put', 'massive_sum'); end
+        def massive_sum(transaction); massive_transactions(transaction, 'put', 'massive_sum', site_options); end
 
-        def massive_update(transaction); massive_transactions(transaction, 'put', 'massive_update'); end
+        def massive_update(transaction); massive_transactions(transaction, 'put', 'massive_update', site_options); end
 
         def method_missing(name, *args, &block)
           all.send(name, *args, &block)

@@ -26,12 +26,12 @@ module Nube
 
     def save(params={})
       if new_record?
-        remote_obj  = self.class.post(self.class.site({ controller: self.class.name.pluralize.underscore }, params.merge(identity)), { attributes: @attributes } ).first
+        remote_obj  = self.class.post(identity.merge(params), { attributes: @attributes } ).first
         @attributes = remote_obj["object"]
         @errors     = remote_obj["errors"]
         @new_record = false if @errors.empty?
       else
-        @errors = self.class.put(self.class.site({ controller: self.class.name.pluralize.underscore, id: id }, params.merge(identity)), { attributes: @attrs_changed } ).first
+        @errors = self.class.put(identity.merge(params.merge(id: id)), { attributes: @attrs_changed, id: id } ).first
       end
       @errors.empty?
     end
@@ -50,8 +50,8 @@ module Nube
     end
 
     ["get","post","put","delete"].each do |method|
-      define_singleton_method method do |site, params={}|
-        do_request(method, site, params)
+      define_singleton_method method do |site_options, params={}|
+        do_request(method, site_options, params)
       end
     end
 
@@ -97,10 +97,12 @@ module Nube
       end
     end
 
-    def self.do_request(method, site, params={})
+    def self.do_request(method, site_options, params={})
+      site = site(site_options[:identity], self.name.pluralize.underscore, site_options[:action], site_options[:id])
       url = URI.parse(site)
       req = "Net::HTTP::#{method.to_s.camelize}".constantize.new(url.to_s)
       req.body = params.to_param
+      req['Authorization'] = "Token token=#{token(site_options[:identity])}"
       res = Net::HTTP.start(url.host, url.port) {|http| http.request(req) }
       if (res.code == "200")
         [JSON.parse(res.body, quirks_mode: true)].flatten.compact

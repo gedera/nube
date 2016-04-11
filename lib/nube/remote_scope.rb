@@ -5,9 +5,9 @@ module RemoteScope
 
   class_methods do
 
-    def node(opts={})
-      opts[:identity] = IDENTITY_SITE if not opts.has_key?(:identity) and defined?(IDENTITY_SITE)
-      "#{self}Relation".constantize.new(self, { site_options: opts })
+    def node(identity=nil)
+      # identity = IDENTITY_SITE if not identity and defined?(IDENTITY_SITE)
+      "#{self}Relation".constantize.new(self, { site_options: {identity: identity} })
     end
 
     def build_params keys, values
