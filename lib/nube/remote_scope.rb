@@ -18,11 +18,6 @@ module RemoteScope
     def scope(name, opts={})
       scope_name = opts.has_key?(:remote_scope) ? opts[:remote_scope] : name
 
-      define_singleton_method name do |*values|
-        scope_params = build_params(opts[:using].to_a, values)
-        "#{self}Relation".constantize.new(self, { scopes: {scope_name => scope_params} })
-      end
-
       "#{self}Relation".constantize.class_eval do
         define_method name do |*values|
           scope_params = xmodel.build_params(opts[:using].to_a, values)
