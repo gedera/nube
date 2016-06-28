@@ -129,7 +129,7 @@ module Nube
 
     def self.method_missing(name, *args, &block)
       super(name, *args) unless ("#{self.name}Relation".constantize.instance_methods - self.instance_methods).include?(name)
-      args.empty? ? self.node.send(name) : self.node.send(name, args.first)
+      args.empty? ? self.node.send(name) : self.node.send(name, *args)
     end
 
   end
