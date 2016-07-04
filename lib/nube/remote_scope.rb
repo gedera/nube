@@ -7,7 +7,7 @@ module RemoteScope
 
     def node(identity=nil)
       # identity = IDENTITY_SITE if not identity and defined?(IDENTITY_SITE)
-      "#{self}Relation".constantize.new(self, { site_options: {identity: (identity || Site.token)} })
+      "#{self}Relation".constantize.new(self, { site_options: {identity: (identity || token)} })
     end
 
     def build_params keys, values
