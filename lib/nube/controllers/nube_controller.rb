@@ -38,7 +38,7 @@ module NubeController
 
   def self.resource(xmodel); @@resource = xmodel; end
 
-  def apply_relations; @resource = @resource.where(relations).where(params[:server_id]); end
+  def apply_relations; @resource = @resource.where(relations).where(server_id: params[:server_id]); end
 
   def parse_request; @json = JSON.parse(request.body.read); end
 

@@ -98,7 +98,7 @@ module Nube
     end
 
     def self.do_request(method, site_options, params={})
-      site = site(site_options[:identity], self.name.pluralize.underscore, site_options[:action], site_options[:id])
+      site = site(site_options[:identity], self.name.split('::').last.pluralize.underscore, site_options[:action], site_options[:id])
       url = URI.parse(site)
       req = "Net::HTTP::#{method.to_s.camelize}".constantize.new(url.to_s)
       req.body = params.to_param
@@ -129,7 +129,7 @@ module Nube
 
     def self.method_missing(name, *args, &block)
       super(name, *args) unless ("#{self.name}Relation".constantize.instance_methods - self.instance_methods).include?(name)
-      args.empty? ? self.node.send(name) : self.node.send(name, args.first)
+      args.empty? ? self.node.send(name) : self.node.send(name, *args)
     end
 
   end
