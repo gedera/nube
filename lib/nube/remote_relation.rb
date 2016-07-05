@@ -4,7 +4,7 @@ module RemoteRelation
 
   included do
     eval("class #{self.to_s}Relation;end")
-    "#{self.to_s}Relation".constantize.class_eval do
+    eval("#{self.to_s}Relation").class_eval do
       attr_accessor :xmodel, :params
 
       def initialize(xmodel, params={})
