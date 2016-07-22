@@ -105,7 +105,7 @@ module Nube
       req['Authorization'] = "Token token=#{token(site_options[:identity])}"
       res = Net::HTTP.start(url.host, url.port) {|http| http.request(req) }
       if (res.code == "200")
-        [JSON.parse(res.body, quirks_mode: true)].flatten.compact
+        [res.body.blank? ? {} : JSON.parse(res.body, quirks_mode: true)].flatten.compact
       else
         raise res.msg + res.code
       end
