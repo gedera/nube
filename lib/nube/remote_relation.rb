@@ -1,9 +1,13 @@
+def define_relation_class klass
+  eval("class #{klass.to_s}Relation;end")
+end
+
 module RemoteRelation
 
   extend ActiveSupport::Concern
 
   included do
-    eval("class #{self.to_s}Relation;end")
+    define_relation_class self
     eval("#{self.to_s}Relation").class_eval do
       attr_accessor :xmodel, :params
 
