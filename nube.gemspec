@@ -13,6 +13,7 @@ Gem::Specification.new do |spec|
   spec.description   = %q{Working with remote objects as activerecord}
   spec.homepage      = "https://github.com/gedera/nube.git"
   spec.license       = "MIT"
+  spec.required_ruby_version = '>= 1.8.6'
 
   # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or
   # delete this section to allow pushing this gem to any host.
